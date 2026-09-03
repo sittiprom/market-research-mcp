@@ -49,73 +49,60 @@ I have 20,000 USD. How many NVIDIA shares can I buy?
 
 ## 🏗️ Architecture
 
-```text
-┌──────────────────────┐
-│        User          │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│    React Frontend    │
-│        Vite          │
-└──────────┬───────────┘
-           │ HTTP
-           ▼
-┌──────────────────────────────┐
-│     Spring Boot Client       │
-│                              │
-│  Spring AI ChatClient        │
-│  OpenAI                      │
-│  MCP Client                  │
-└──────────────┬───────────────┘
-               │ MCP
-               ▼
-┌──────────────────────────────┐
-│      Spring MCP Server       │
-│                              │
-│  Stock Market Tools          │
-│  Currency Tools              │
-│  Calculation Tools           │
-└───────────┬──────────┬───────┘
-            │          │
-            ▼          ▼
-     ┌────────────┐ ┌──────────────┐
-     │Twelve Data │ │ Frankfurter  │
-     │ Market API │ │    FX API    │
-     └────────────┘ └──────────────┘
+MarketLens AI separates the conversational AI layer from external financial services through the **Model Context Protocol (MCP)**.
+
+```mermaid
+flowchart LR
+    U["👤 User"]
+    FE["💻 React Frontend<br/>Vite"]
+    AI["🧠 AI Client<br/>Spring Boot + Spring AI"]
+    LLM["✨ OpenAI<br/>LLM"]
+    MCP["🔌 MCP Server<br/>Spring Boot"]
+    STOCK["📈 Twelve Data<br/>Stock Market API"]
+    FX["💱 Frankfurter<br/>FX API"]
+
+    U --> FE
+    FE -->|"REST /api/ask"| AI
+    AI --> LLM
+    LLM -->|"Selects tools"| AI
+    AI -->|"MCP / Streamable HTTP"| MCP
+    MCP -->|"Stock data"| STOCK
+    MCP -->|"Exchange rates"| FX
+    STOCK --> MCP
+    FX --> MCP
+    MCP -->|"Structured tool results"| AI
+    AI -->|"Markdown response"| FE
+    FE --> U
 ```
 
-The **AI client** handles conversation and reasoning. The **MCP server** owns integrations and deterministic tools. This keeps the LLM separated from external API implementation details.
+The **AI client** handles conversation and reasoning. The **MCP server** owns external integrations and deterministic tools, keeping provider-specific API logic separate from the LLM.
 
 ---
 
-## 🧠 MCP Tool Orchestration
+## 🧠 Multi-Tool Orchestration
 
-A request can require more than one tool.
+MarketLens can combine multiple MCP tools to answer a single request.
 
 For example:
 
 > **I have 45,000 CAD. How many Apple shares can I buy?**
 
-```text
-                    User Question
-                         │
-                         ▼
-                        LLM
-                    ┌────┴────┐
-                    ▼         ▼
-            convertCurrency  getPrice
-               CAD → USD      AAPL
-                    │         │
-                    └────┬────┘
-                         ▼
-                 calculateShares
-                         │
-                         ▼
-                Structured Result
-                         │
-                         ▼
-                   LLM Response
+```mermaid
+flowchart TD
+    Q["💬 45,000 CAD<br/>How many Apple shares can I buy?"]
+    LLM["🧠 Spring AI / LLM"]
+    FX["💱 convertCurrency<br/>CAD → USD"]
+    PRICE["📈 getPrice<br/>AAPL → USD"]
+    CALC["🧮 calculateShares<br/>USD budget ÷ USD share price"]
+    RESULT["✅ Whole Shares<br/>Total Cost<br/>Remaining Balance"]
+
+    Q --> LLM
+    LLM --> FX
+    LLM --> PRICE
+    FX --> CALC
+    PRICE --> CALC
+    CALC --> LLM
+    LLM --> RESULT
 ```
 
 The LLM decides which tools are needed and orchestrates them. Market values come from external services, while arithmetic such as whole-share quantity, total cost, and remaining balance is performed deterministically in Java.
