@@ -1,0 +1,13 @@
+package com.market_research_mcp.server.model.request;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class PriceTargetRequest {
+    private String symbol;
+    private String apiKey;
+}

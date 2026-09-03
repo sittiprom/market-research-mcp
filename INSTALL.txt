@@ -1,0 +1,22 @@
+MarketLens README package
+=========================
+
+Copy these items into the ROOT of your market-research-mcp repository:
+
+README.md
+/docs/images/market-research.png
+/docs/images/share-calculation.png
+
+Expected result:
+
+market-research-mcp/
+├── client/
+├── server/
+├── frontend/
+├── docs/
+│   └── images/
+│       ├── market-research.png
+│       └── share-calculation.png
+└── README.md
+
+The image links in README.md are already configured for this structure.
