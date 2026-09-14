@@ -9,6 +9,26 @@ The project demonstrates practical **MCP tool discovery, tool calling, and multi
 > **Disclaimer:** MarketLens AI is an educational and portfolio project. It provides market research and calculations, not personalized investment advice or trade execution.
 
 ---
+## Demo 
+
+
+
+https://github.com/user-attachments/assets/859a6201-06fb-4320-b3f1-fbbc45876428
+
+
+
+## MCP Client Integration
+
+
+MarketLens AI is exposed as an MCP server and can be connected to external MCP clients such as Claude Desktop.
+
+The screenshot below shows Claude Desktop connected to the MarketLens MCP server through the connector configuration.
+
+This allows Claude to discover and invoke MarketLens tools for market data and financial queries.
+
+<img width="904" height="492" alt="marketlens-mcp" src="https://github.com/user-attachments/assets/14efbba7-29af-4c50-b6bb-d4620c80fedc" />
+
+
 
 ## ✨ Features
 
