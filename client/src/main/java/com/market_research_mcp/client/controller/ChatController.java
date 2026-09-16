@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ai.chat.memory.ChatMemory;
 
 
 @RestController
@@ -20,8 +21,14 @@ public class ChatController {
 
     @PostMapping("/api/ask")
     public String ask(@RequestBody ChatRequest chatRequest) {
-        return chatClient.prompt().user(chatRequest.getQuestion())
-                .call().content();
+        return chatClient.prompt()
+                .user(chatRequest.getQuestion())
+                .advisors(advisor -> advisor.param(
+                        ChatMemory.CONVERSATION_ID,
+                        chatRequest.getConversationId()
+                ))
+                .call()
+                .content();
 
     }
 }
