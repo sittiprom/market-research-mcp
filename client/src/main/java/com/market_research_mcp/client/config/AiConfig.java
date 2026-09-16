@@ -42,7 +42,9 @@ public class AiConfig {
                     not personalized financial advice.
     """)
 
-
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(chatMemory).build()
+                )
                 .defaultTools(mcpTools.getToolCallbacks())
                 .build();
     }
