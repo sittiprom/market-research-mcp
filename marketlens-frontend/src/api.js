@@ -3,16 +3,26 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 const CONVERSATION_ID_KEY = 'marketlens-conversation-id'
 
+function generateConversationId() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
 function getConversationId() {
   let conversationId = sessionStorage.getItem(CONVERSATION_ID_KEY)
 
   if (!conversationId) {
-    conversationId = crypto.randomUUID()
+    conversationId = generateConversationId()
     sessionStorage.setItem(CONVERSATION_ID_KEY, conversationId)
   }
 
   return conversationId
 }
+
+
 
 
 /**
